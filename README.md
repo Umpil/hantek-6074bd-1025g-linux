@@ -92,7 +92,7 @@ Some distributions (e.g. Fedora, Arch) have no `plugdev` group. Create one, or r
 Standalone:
 
 ```sh
-git clone https://github.com/Umpil/linux_hantek1025G_6074BD.git
+git clone https://github.com/Umpil/hantek-6074bd-1025g-linux.git
 cd linux_hantek1025G_6074BD
 python3 -m venv .venv
 .venv/bin/pip install .          # or: pip install -e . for development
@@ -102,12 +102,12 @@ python3 -m venv .venv
 As a dependency of another project:
 
 ```sh
-pip install "git+https://github.com/Umpil/linux_hantek1025G_6074BD.git"
+pip install "https://github.com/Umpil/hantek-6074bd-1025g-linux.git"
 ```
 
 ```toml
 # pyproject.toml of your project
-dependencies = ["hantek-linux @ git+https://github.com/Umpil/linux_hantek1025G_6074BD.git"]
+dependencies = ["hantek-linux @ git+https://github.com/Umpil/hantek-6074bd-1025g-linux.git"]
 ```
 
 The only Python dependency is `pyusb` (≥ 1.3.1, < 2). pip installs it automatically.
