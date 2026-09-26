@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hantek web</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='uPlot.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <h1>Hantek1025G + Hantek6074BD</h1>
+  <span id="usb-status" class="muted">USB: …</span>
+  <button id="release" title="Закрыть USB, чтобы CLI и скрипты могли работать с приборами">Освободить USB</button>
+  <button id="reset-settings" class="link">Сбросить настройки</button>
+</header>
+
+<main>
+<aside>
+  <section class="panel" id="gen">
+    <h2>Генератор</h2>
+    <div class="grid">
+      <label for="g-frequency">Частота, Гц</label>
+      <input id="g-frequency" type="number" min="1" max="25000000" step="any" value="100000">
+      <label for="g-amplitude">Амплитуда (пик), В</label>
+      <span><input id="g-amplitude" type="number" min="0" max="3.5" step="0.01" value="0.5"> <span id="g-vpp" class="muted"></span></span>
+      <label for="g-offset">Смещение, В</label>
+      <input id="g-offset" type="number" min="-3.5" max="3.5" step="0.01" value="0">
+      <label for="g-shape">Форма</label>
+      <select id="g-shape"></select>
+      <label for="g-duty">Скважность, %</label>
+      <input id="g-duty" type="number" min="1" max="99" step="1" value="50">
+      <label for="g-burst">Пачка (Hann, синус)</label>
+      <span><input id="g-burst" type="checkbox"> циклов <select id="g-burst-cycles"></select></span>
+      <label for="g-burst-interval">Интервал пачек, мс</label>
+      <input id="g-burst-interval" type="number" min="1" max="10" step="0.1" value="1">
+      <label for="g-single">Одиночный проход</label>
+      <input id="g-single" type="checkbox">
+      <label for="g-ext">Внешний триггер</label>
+      <span><input id="g-ext" type="checkbox"> по спаду <input id="g-falling" type="checkbox"> <span class="warn small">не проверено на железе</span></span>
+    </div>
+    <div class="buttons">
+      <button id="g-apply" class="primary">Применить</button>
+      <button id="g-zero" title="OUTPUT = 0 В DC (не high-Z), SYNC продолжает работать">В ноль</button>
+    </div>
+    <div id="g-plan" class="plan"></div>
+    <div id="g-applied" class="small muted"></div>
+  </section>
+
+  <section class="panel" id="scope">
+    <h2>Осциллограф</h2>
+    <div class="grid">
+      <label for="s-timebase">Развёртка</label>
+      <select id="s-timebase"></select>
+      <label for="s-window">Окно, с</label>
+      <span><input id="s-window" type="number" step="any" placeholder="весь кадр"> <button id="s-fit" title="Выбрать минимальную развёртку, покрывающую окно">Подобрать</button></span>
+    </div>
+    <table id="channels" class="compact">
+      <thead><tr><th>Канал</th><th>Показ</th><th>В/дел</th><th>Связь</th><th>Lever</th><th>Полоса</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <h3>Триггер</h3>
+    <div class="grid">
+      <label for="t-source">Источник</label>
+      <select id="t-source"><option value="1">CH1</option><option value="2" selected>CH2</option><option value="3">CH3</option><option value="4">CH4</option></select>
+      <label for="t-level">Уровень, В</label>
+      <span><input id="t-level" type="number" step="any" value="3.4"> <span id="t-range" class="muted small"></span></span>
+      <label for="t-slope">Фронт</label>
+      <select id="t-slope"><option value="rising">нарастающий</option><option value="falling">спадающий</option></select>
+      <label for="t-sweep">Режим</label>
+      <select id="t-sweep"><option value="auto">AUTO</option><option value="normal">NORMAL</option></select>
+    </div>
+    <div class="buttons">
+      <button id="t-autolevel" title="Захват в AUTO, уровень = середина размаха источника">Автоуровень</button>
+      <span id="t-auto" class="small muted"></span>
+    </div>
+  </section>
+</aside>
+
+<section id="view">
+  <div class="toolbar">
+    <button id="capture" class="primary">Захват</button>
+    <button id="live">Live ▶</button>
+    <label>интервал, с <input id="live-interval" type="number" min="0.2" max="5" step="0.1" value="0.5"></label>
+    <button id="csv">CSV</button>
+    <span id="info" class="muted small"></span>
+  </div>
+  <div id="error" class="error" hidden></div>
+  <div id="chart"></div>
+  <p class="small muted">Масштаб: выделите область мышью. Двойной щелчок — весь кадр (или окно). Клик по легенде — скрыть канал.
+     Пунктир: вертикальный — момент триггера, горизонтальный — уровень триггера.</p>
+  <table id="measure">
+    <thead><tr><th>Канал</th><th>Частота</th><th>Размах</th><th>Min</th><th>Max</th><th>Среднее</th><th>RMS (AC)</th><th>За шкалой</th><th>Режим</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+</main>
+
+<script id="meta" type="application/json">{{ meta|tojson }}</script>
+<script src="{{ url_for('static', filename='uPlot.iife.min.js') }}"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

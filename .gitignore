@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.egg-info/
+build/
+dist/
+
+# Research history: kept locally, not published.
+reference/
+
+# Bring-up data; only the final verification report is published.
+evidence/*
+evidence/verification-20260926/
+
+
+# Web UI runtime files.
+webui/web.log
+webui/web.pid
